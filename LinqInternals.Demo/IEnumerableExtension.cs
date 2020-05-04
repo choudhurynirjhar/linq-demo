@@ -38,5 +38,25 @@ namespace LinqInternals.Demo
                 } 
             }
         }
+
+        public static IEnumerable<TResult> NewJoin<T, TH, TKey, TResult>(
+            this IEnumerable<T> items,
+            IEnumerable<TH> innerItems,
+            Func<T, TKey> outerKeySelector,
+            Func<TH, TKey> innerKeySelector,
+            Func<T, TH, TResult> resultSelector
+            )
+        {
+            foreach (var item in items)
+            {
+                foreach (var innerItem in innerItems)
+                {
+                    if (outerKeySelector(item).Equals(innerKeySelector(innerItem)))
+                    {
+                        yield return resultSelector(item, innerItem);
+                    }
+                }
+            }
+        }
     }
 }

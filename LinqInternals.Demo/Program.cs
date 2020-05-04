@@ -9,6 +9,7 @@ namespace LinqInternals.Demo
         {
             var customers = new[] { 
                 new Customer{
+                    Id=1,
                     Name="Jon",
                     Phones=new []{
                         new Phone
@@ -19,6 +20,7 @@ namespace LinqInternals.Demo
                 },
                 new Customer
                 {
+                    Id=2,
                     Name="Jane",
                     Phones=new[]
                     {
@@ -30,10 +32,20 @@ namespace LinqInternals.Demo
                 }
             };
 
-            var customerPhones = customers.NewSelectMany(c => c.Phones );
-            foreach (var item in customerPhones)
+            var addresses = new[]
             {
-                Console.WriteLine($"{item.Number} - {item.PhoneType}");
+                new Address{Id=1, CustomerId=2, Street="123 Street", City="City1"},
+                new Address {Id=2, CustomerId=2, Street="457 Street", City="City2"}
+            };
+
+            var customerwithaddress = customers.NewJoin(addresses
+                , c => c.Id
+                , a => a.CustomerId
+                , (c, a) => new { c.Name, a.Street, a.City });
+
+            foreach (var item in customerwithaddress)
+            {
+                Console.WriteLine($"{item.Name} - {item.Street} - {item.City}");
             }
         }
 
